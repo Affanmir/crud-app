@@ -1,5 +1,11 @@
 import React from 'react';
 import { Divider, Button } from 'antd';
+
+const delProduct= (id)=>{
+
+    
+}
+
 const Product = ({propx}) =>{
     return (
         <div className = "produts">
@@ -8,9 +14,8 @@ const Product = ({propx}) =>{
             <p>{propx.description}</p>
             <p>{propx.price}</p> 
             <p>{propx.category}</p>   
-            <Button  onClick={() => {
-                fetch
-            }} type="danger" >Delete Product</Button>
+            <Button  onClick={() => delProduct(propx.id)
+            } type="danger" >Delete Product</Button>
             <Divider/>
               
         </div>
