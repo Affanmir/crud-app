@@ -10,7 +10,7 @@ import { ProductsModule } from './products/products.module';
   imports: [
     ProductsModule,CategoryModule,
     MongooseModule.forRoot(
-      'mongodb+srv://affanmir:oki@cluster0.98nopec.mongodb.net/nestjs-practice?retryWrites=true&w=majority',
+      'mongodb+srv://affanmir:ok@cluster0.98nopec.mongodb.net/nestjs-practice?retryWrites=true&w=majority',{ useNewUrlParser: true }
     ),
   ],
   controllers: [AppController],
