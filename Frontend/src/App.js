@@ -104,8 +104,7 @@ function App() {
 
   return (
     <div className="App">
-      {" "}
-      <Layoutdesign />{" "}
+      <Layoutdesign />
     </div>
   );
 }

@@ -29,10 +29,15 @@ const Catgrid = () => {
 
   const columns = [
     {
-      title: "Cat Title",
+      title: "Category Title",
       dataIndex: "title",
       key: "title",
     },
+    {
+        title: "Image",
+        dataIndex: "Image",
+        key: "Image",
+      },
     {
       title: "Action",
       key: "action",

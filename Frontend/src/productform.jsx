@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, Input, Button, Select, InputNumber, Upload } from "antd";
 
@@ -7,6 +8,25 @@ const Addprod = (requestOptions) => {
 };
 
 const Productform = () => {
+  const [catdata, setCat] = useState([]);
+  const getcat = () => {
+    fetch("/category", {
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(myJson) {
+        setCat(myJson);
+      });
+  };
+  useEffect(() => {
+    getcat();
+  }, []);
+
   return (
     <>
       <Form
@@ -16,14 +36,15 @@ const Productform = () => {
         style={{ backgroundColor: "white", marginTop: 15 }}
         onFinish={(values) => {
           const jsonmsg = {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            title: values.Prodtitle,
-            description: values.Description,
-            price: values.Price,
-            category: values.Category
-          })};
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              title: values.Prodtitle,
+              description: values.Description,
+              price: values.Price,
+              category: values.Category,
+            }),
+          };
           Addprod(jsonmsg);
         }}
       >
@@ -39,7 +60,9 @@ const Productform = () => {
         </Form.Item>
         <Form.Item label="Category" style={{ color: "white" }} name="Category">
           <Select>
-            <Select.Option value="demo">Demo</Select.Option>
+            {catdata.map((item) => (
+              <Select.Option value={item.title}>{item.title}</Select.Option>
+            ))}
           </Select>
         </Form.Item>
         <Form.Item label="Price" name="Price">
@@ -49,12 +72,16 @@ const Productform = () => {
           <Upload action="/upload.do" listType="picture-card">
             <div>
               <PlusOutlined />
-              <div style={{ marginTop: 8 }}>Upload</div>
+              <div style={{ marginTop: 8 }}>Image Upload</div>
             </div>
           </Upload>
         </Form.Item>
         <Form.Item style={{ marginTop: 8 }}>
-          <Button htmlType="submit" type="primary">
+          <Button
+            style={{ marginLeft: "400px" }}
+            htmlType="submit"
+            type="primary"
+          >
             Submit
           </Button>
         </Form.Item>

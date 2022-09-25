@@ -1,8 +1,10 @@
 import { Space, Tag, Table, Button } from "antd";
 import React from "react";
 import { useState, useEffect } from "react";
+import { Image } from 'antd';
 
 const Prodgrid = () => {
+
   const [proddata, setProd] = useState([]);
 
   const delProd = (id) => {
@@ -35,6 +37,11 @@ const Prodgrid = () => {
       key: "title",
     },
     {
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
+    },
+    {
       title: "Description",
       dataIndex: "description",
       key: "description",
@@ -49,6 +56,7 @@ const Prodgrid = () => {
       dataIndex: "category",
       key: "category",
     },
+    
     {
       title: "Action",
       key: "action",
