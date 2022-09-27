@@ -1,16 +1,49 @@
-import { Space, Tag, Table, Button } from "antd";
+import { Space, Tag, Table, Button,Modal } from "antd";
 import React from "react";
 import { useState, useEffect } from "react";
-import { Image } from 'antd';
+import Producteditform from "./producteditform";
 
-const Prodgrid = () => {
-
+const Prodgrid = ({ props }) => {
   const [proddata, setProd] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editformdata, seteditformdata]= useState({});
+
+
+  const showModal = (record) => {
+    seteditformdata({record,updateproduct});
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
 
   const delProd = (id) => {
     fetch(`/products/${id}`, { method: "DELETE" }).then(() => getProd());
   };
- 
+
+
+  const updateproduct = (values) => {
+    handleOk();
+    console.log(values);
+    fetch(`/products/${values.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        title: values.title,
+        img: values.img,
+        description: values.description,
+        price: values.price
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    }).then(() => getProd());
+  };
 
   const getProd = () => {
     fetch("/products", {
@@ -28,7 +61,7 @@ const Prodgrid = () => {
   };
   useEffect(() => {
     getProd();
-  }, []);
+  }, [props]);
 
   const columns = [
     {
@@ -40,6 +73,14 @@ const Prodgrid = () => {
       title: "Image",
       dataIndex: "image",
       key: "image",
+      render: (_, record) => (
+        <img
+          width="75"
+          height="75"
+          alt={require("../src/imgs/eyes_logo.png")}
+          src={require("../src/imgs/IMG_7847.PNG")}
+        />
+      ),
     },
     {
       title: "Description",
@@ -56,7 +97,7 @@ const Prodgrid = () => {
       dataIndex: "category",
       key: "category",
     },
-    
+
     {
       title: "Action",
       key: "action",
@@ -64,7 +105,7 @@ const Prodgrid = () => {
         <Space size="middle">
           <a>
             {" "}
-            <Button type="default"> Edit </Button>
+            <Button onClick={()=> showModal(record)} type="default"> Edit </Button>
           </a>
           <a>
             <Button onClick={() => delProd(record.id)} type="danger">
@@ -76,8 +117,20 @@ const Prodgrid = () => {
     },
   ];
 
-  
-
-  return <Table columns={columns} dataSource={proddata} />;
+  return (
+    <>
+      <Modal
+        title="Edit This Product"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={null}
+        destroyOnClose={true}
+      >
+        <Producteditform props= {editformdata}/>
+      </Modal>
+      <Table columns={columns} dataSource={proddata} />
+    </>
+  );
 };
 export default Prodgrid;

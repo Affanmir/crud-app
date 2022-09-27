@@ -10,9 +10,12 @@ export class CategoryService {
     @InjectModel('Category') private readonly categoryModel: Model<Category>,
   ) {}
 
-  async insertCategory(title: string, ) {
+  async insertCategory(title: string,img: string,image:string ) {
+  
     const newCategory = new this.categoryModel({
       title,
+      img,
+      image,
     });
     const result = await newCategory.save();
     return result.id as string;
@@ -23,6 +26,8 @@ export class CategoryService {
     return categorys.map(prod => ({
       id: prod.id,
       title: prod.title,
+      img: prod.img,
+      image: prod.image
     }));
   }
 
@@ -31,16 +36,21 @@ export class CategoryService {
     return {
       id: category.id,
       title: category.title,
+      img: category.img,
     };
   }
 
   async updateCategory(
     categoryId: string,
     title: string,
+    img: string,
   ) {
     const updatedCategory = await this.findCategory(categoryId);
     if (title) {
       updatedCategory.title = title;
+    }
+    if (img) {
+      updatedCategory.img = img;
     }
     updatedCategory.save();
   }

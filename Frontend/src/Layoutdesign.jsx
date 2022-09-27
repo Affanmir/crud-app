@@ -9,12 +9,15 @@ import {
 import Productform from "./Productform";
 
 import { Breadcrumb, Layout, Menu, Button, Modal } from "antd";
-import React, { useState } from "react";
-import Progrid from "./Prodgrid";
+import React, { useState, useEffect } from "react";
 import Prodgrid from "./Prodgrid";
 import Catgrid from "./Catgrid";
 import Categoryform from "./categoryform";
 const { Header, Content, Footer, Sider } = Layout;
+
+const Addprod = (requestOptions) => {
+  fetch("/products", requestOptions);
+};
 
 function getItem(label, key, icon, children) {
   return {
@@ -30,9 +33,15 @@ const items = [
 ];
 
 const Layoutdesign = () => {
+  const reloader = () => {
+    console.log(reloadRequired);
+    if (reloadRequired) setreloadRequired(false);
+    else setreloadRequired(true);
+  };
   const [collapsed, setCollapsed] = useState(false);
   const [CurrentKey, setcurrentKey] = useState(1);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reloadRequired, setreloadRequired] = useState();
 
   const showModal = () => {
     setIsModalOpen(true);
@@ -44,6 +53,40 @@ const Layoutdesign = () => {
 
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+  const Addcat = (requestOptions) => {
+    fetch("/category", requestOptions);
+  };
+  
+  const onSubmiTCAT = (values) => {
+    handleOk();
+    console.log(values);
+    const jsonmsg = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: values.CaTtitle,
+        img: values.ImgURL,
+      }),
+    };
+    Addcat(jsonmsg);
+    reloader();
+  };
+  const onSubmit = (values) => {
+    handleOk();
+    const jsonmsg = {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: values.Prodtitle,
+        description: values.Description,
+        price: values.Price,
+        category: values.Category,
+        img: values.ImgURL,
+      }),
+    };
+    Addprod(jsonmsg);
+    reloader();
   };
 
   return (
@@ -105,10 +148,12 @@ const Layoutdesign = () => {
                   open={isModalOpen}
                   onOk={handleOk}
                   onCancel={handleCancel}
+                  footer= {null}
+                  destroyOnClose= {true}
                 >
-                  <Productform />
+                  <Productform props={onSubmit} />
                 </Modal>
-                <Prodgrid />
+                <Prodgrid props={reloadRequired} />
               </>
             ) : (
               <>
@@ -128,10 +173,12 @@ const Layoutdesign = () => {
                   open={isModalOpen}
                   onOk={handleOk}
                   onCancel={handleCancel}
+                  footer= {null}
+                  destroyOnClose= {true}
                 >
-                  <Categoryform />
+                  <Categoryform props={onSubmiTCAT} />
                 </Modal>
-                <Catgrid />
+                <Catgrid props= {reloadRequired}/>
               </>
             )}
           </div>

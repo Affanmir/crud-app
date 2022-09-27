@@ -3,12 +3,7 @@ import { Form, Input, Button } from "antd";
 import { Upload } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-const Addcat = (requestOptions) => {
-    fetch("/category", requestOptions);
-  };
-  
-
-const Categoryform = () => {
+const Categoryform = ({ props }) => {
   return (
     <>
       <Form
@@ -16,19 +11,12 @@ const Categoryform = () => {
         wrapperCol={{ span: 20 }}
         layout="horizontal"
         style={{ backgroundColor: "white", marginTop: 15 }}
-        onFinish={(values) => {
-            console.log(values);
-            const jsonmsg = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              title: values.CaTtitle,
-            })};
-            Addcat(jsonmsg);
-          }}
-        
+        onFinish={props}
       >
         <Form.Item style={{ color: "white" }} label="Title" name="CaTtitle">
+          <Input />
+        </Form.Item>
+        <Form.Item style={{ color: "white" }} label="Imageurl" name="ImgURL">
           <Input />
         </Form.Item>
         <Form.Item label="Upload" valuePropName="fileList" name="image">
@@ -40,7 +28,13 @@ const Categoryform = () => {
           </Upload>
         </Form.Item>
         <Form.Item>
-          <Button htmlType="submit" type="primary">Submit</Button>
+          <Button
+            style={{ marginLeft: "400px" }}
+            htmlType="submit"
+            type="primary"
+          >
+            Submit
+          </Button>
         </Form.Item>
       </Form>
     </>

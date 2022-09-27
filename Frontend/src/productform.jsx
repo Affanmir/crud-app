@@ -3,11 +3,8 @@ import { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, Input, Button, Select, InputNumber, Upload } from "antd";
 
-const Addprod = (requestOptions) => {
-  fetch("/products", requestOptions);
-};
 
-const Productform = () => {
+const Productform = ({props}) => {
   const [catdata, setCat] = useState([]);
   const getcat = () => {
     fetch("/category", {
@@ -33,20 +30,23 @@ const Productform = () => {
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 20 }}
         layout="horizontal"
+        //onFinish={onSubmit}
         style={{ backgroundColor: "white", marginTop: 15 }}
-        onFinish={(values) => {
-          const jsonmsg = {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              title: values.Prodtitle,
-              description: values.Description,
-              price: values.Price,
-              category: values.Category,
-            }),
-          };
-          Addprod(jsonmsg);
-        }}
+        onFinish= {props}
+        // onFinish={(values) => {
+        //   const jsonmsg = {
+        //     method: "POST",
+        //     headers: { "Content-Type": "application/json" },
+        //     body: JSON.stringify({
+        //       title: values.Prodtitle,
+        //       description: values.Description,
+        //       price: values.Price,
+        //       category: values.Category,
+        //       img: values.ImgURL,
+        //     }),
+        //   };
+        //   Addprod(jsonmsg);
+        // }}
       >
         <Form.Item style={{ color: "white" }} label="Title" name="Prodtitle">
           <Input />
@@ -68,14 +68,17 @@ const Productform = () => {
         <Form.Item label="Price" name="Price">
           <InputNumber />
         </Form.Item>
-        <Form.Item label="Upload" valuePropName="fileList" name="image">
+        <Form.Item style={{ color: "white" }} label="Imageurl" name="ImgURL">
+          <Input />
+        </Form.Item>
+        {/* <Form.Item label="Upload" valuePropName="fileList" name="image">
           <Upload action="/upload.do" listType="picture-card">
             <div>
               <PlusOutlined />
               <div style={{ marginTop: 8 }}>Image Upload</div>
             </div>
           </Upload>
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item style={{ marginTop: 8 }}>
           <Button
             style={{ marginLeft: "400px" }}

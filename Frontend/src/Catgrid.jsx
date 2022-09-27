@@ -1,14 +1,44 @@
-import { Space, Tag, Table, Button } from "antd";
+import { Space, Tag, Table, Button, Modal } from "antd";
 import React from "react";
 import { useState, useEffect } from "react";
+import Categoryeditform from "./categoryeditform";
 
-const Catgrid = () => {
+const Catgrid = ({ props }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [propx, setpropx] = useState({});
+  const showModal = (record) => {
+    setpropx({ record, updatecategory });
+    setIsModalOpen(true);
+  };
+
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
+
   const [catdata, setCat] = useState([]);
 
   const delcat = (id) => {
     fetch(`/category/${id}`, { method: "DELETE" }).then(() => getcat());
   };
 
+  const updatecategory = (values) => {
+    handleOk();
+    console.log(values);
+    fetch(`/category/${values.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        title: values.title,
+        img: values.img,
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8",
+      },
+    }).then(() => getcat());
+  };
   const getcat = () => {
     fetch("/category", {
       headers: {
@@ -25,7 +55,7 @@ const Catgrid = () => {
   };
   useEffect(() => {
     getcat();
-  }, []);
+  }, [props]);
 
   const columns = [
     {
@@ -34,10 +64,18 @@ const Catgrid = () => {
       key: "title",
     },
     {
-        title: "Image",
-        dataIndex: "Image",
-        key: "Image",
-      },
+      title: "Image",
+      dataIndex: "img",
+      key: "img",
+      render: (_, record) => (
+        <img
+          width="75"
+          height="75"
+          alt={require("../src/imgs/eyes_logo.png")}
+          src={require("../src/imgs/IMG_7847.PNG")}
+        />
+      ),
+    },
     {
       title: "Action",
       key: "action",
@@ -45,7 +83,10 @@ const Catgrid = () => {
         <Space size="middle">
           <a>
             {" "}
-            <Button type="default"> Edit </Button>
+            <Button onClick={() => showModal(record)} type="default">
+              {" "}
+              Edit{" "}
+            </Button>
           </a>
           <a>
             <Button onClick={() => delcat(record.id)} type="danger">
@@ -57,6 +98,20 @@ const Catgrid = () => {
     },
   ];
 
-  return <Table columns={columns} dataSource={catdata} />;
+  return (
+    <>
+      <Modal
+        title="Edit This Category"
+        open={isModalOpen}
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={false}
+        destroyOnClose={true}
+      >
+        <Categoryeditform props={propx} />
+      </Modal>
+      <Table columns={columns} dataSource={catdata} />
+    </>
+  );
 };
 export default Catgrid;

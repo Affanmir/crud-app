@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Divider, Typography, Button, Col, Row, Modal } from "antd";
-import Category from "./Category";
-import Product from "./Product";
-import Productform from "./Productform";
-import Categoryform from "./categoryform";
 import { Layout } from "antd";
 import layout from "./Layoutdesign";
 import { Space, Table, Tag } from "antd";
