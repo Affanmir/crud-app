@@ -1,16 +1,16 @@
-import { Space, Tag, Table, Button,Modal } from "antd";
+import { Space, Table, Button, Modal } from "antd";
 import React from "react";
 import { useState, useEffect } from "react";
 import Producteditform from "./producteditform";
 
 const Prodgrid = ({ props }) => {
+  const axios = require('axios');
   const [proddata, setProd] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editformdata, seteditformdata]= useState({});
-
+  const [editformdata, seteditformdata] = useState({});
 
   const showModal = (record) => {
-    seteditformdata({record,updateproduct});
+    seteditformdata({ record, updateproduct });
     setIsModalOpen(true);
   };
 
@@ -22,27 +22,50 @@ const Prodgrid = ({ props }) => {
     setIsModalOpen(false);
   };
 
-
   const delProd = (id) => {
     fetch(`/products/${id}`, { method: "DELETE" }).then(() => getProd());
   };
 
-
   const updateproduct = (values) => {
     handleOk();
     console.log(values);
-    fetch(`/products/${values.id}`, {
+    let formData = new FormData();
+    formData.append("image", values.image[0].originFileObj);
+    formData.append("title", values.title);
+    formData.append("img", values.img);
+    formData.append("description",values.description);
+    formData.append("price", values.price);
+    formData.append("category",values.category);
+
+    
+    axios({
       method: "PATCH",
-      body: JSON.stringify({
-        title: values.title,
-        img: values.img,
-        description: values.description,
-        price: values.price
-      }),
+      url: `http://localhost:3000/products/${values.id}`,
+      data: formData,
       headers: {
-        "Content-type": "application/json; charset=UTF-8",
+        "Content-Type": "multipart/form-data",
       },
-    }).then(() => getProd());
+    })
+      .then((res) => {
+        getProd();
+        console.log(`statusCode: ${res.statusCode}`);
+        console.log(res);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    // fetch(`/products/${values.id}`, {
+    //   method: "PATCH",
+    //   body: JSON.stringify({
+    //     title: values.title,
+    //     img: values.img,
+    //     description: values.description,
+    //     price: values.price,
+    //   }),
+    //   headers: {
+    //     "Content-type": "application/json; charset=UTF-8",
+    //   },
+    // }).then(() => getProd());
   };
 
   const getProd = () => {
@@ -73,14 +96,17 @@ const Prodgrid = ({ props }) => {
       title: "Image",
       dataIndex: "image",
       key: "image",
-      render: (_, record) => (
-        <img
-          width="75"
-          height="75"
-          alt={require("../src/imgs/eyes_logo.png")}
-          src={require("../src/imgs/IMG_7847.PNG")}
-        />
-      ),
+      render: (_, record) => {
+        const imgx = new Image();
+        imgx.src = `data:image/jpeg;base64,${record.image}`; return(
+          <img
+            width="75"
+            height="75"
+            alt={imgx.src}
+            src={imgx.src}
+          />
+        );
+      },
     },
     {
       title: "Description",
@@ -105,7 +131,10 @@ const Prodgrid = ({ props }) => {
         <Space size="middle">
           <a>
             {" "}
-            <Button onClick={()=> showModal(record)} type="default"> Edit </Button>
+            <Button onClick={() => showModal(record)} type="default">
+              {" "}
+              Edit{" "}
+            </Button>
           </a>
           <a>
             <Button onClick={() => delProd(record.id)} type="danger">
@@ -127,7 +156,7 @@ const Prodgrid = ({ props }) => {
         footer={null}
         destroyOnClose={true}
       >
-        <Producteditform props= {editformdata}/>
+        <Producteditform props={editformdata} />
       </Modal>
       <Table columns={columns} dataSource={proddata} />
     </>

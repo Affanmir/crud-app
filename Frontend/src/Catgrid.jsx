@@ -1,7 +1,9 @@
-import { Space, Tag, Table, Button, Modal } from "antd";
+import { Space, Table, Button, Modal } from "antd";
 import React from "react";
 import { useState, useEffect } from "react";
 import Categoryeditform from "./categoryeditform";
+const axios = require("axios");
+
 
 const Catgrid = ({ props }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,31 +29,47 @@ const Catgrid = ({ props }) => {
 
   const updatecategory = (values) => {
     handleOk();
-    console.log(values);
-    fetch(`/category/${values.id}`, {
+    let formData = new FormData();
+    formData.append("image", values.image[0].originFileObj);
+    formData.append("title", values.title);
+    formData.append("img", values.img);
+    axios({
       method: "PATCH",
-      body: JSON.stringify({
-        title: values.title,
-        img: values.img,
-      }),
+      url: `http://localhost:3000/category/${values.id}`,
+      data: formData,
       headers: {
-        "Content-type": "application/json; charset=UTF-8",
-      },
-    }).then(() => getcat());
-  };
-  const getcat = () => {
-    fetch("/category", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
       },
     })
-      .then(function(response) {
-        return response.json();
+      .then((res) => {
+        getcat();
+        console.log(`statusCode: ${res.statusCode}`);
+        console.log(res);
       })
-      .then(function(myJson) {
-        setCat(myJson);
+      .catch((error) => {
+        console.error(error);
       });
+   
+  };
+  const getcat = () => {
+    axios({
+      method: "GET",
+      url: `http://localhost:3000/category/`,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+      
+    })
+      .then((res) => {
+        console.log(res);
+        setCat(res.data);
+        console.log(`statusCode: ${res.statusCode}`);
+        
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
   };
   useEffect(() => {
     getcat();
@@ -65,16 +83,22 @@ const Catgrid = ({ props }) => {
     },
     {
       title: "Image",
-      dataIndex: "img",
-      key: "img",
-      render: (_, record) => (
-        <img
-          width="75"
-          height="75"
-          alt={require("../src/imgs/eyes_logo.png")}
-          src={require("../src/imgs/IMG_7847.PNG")}
-        />
-      ),
+      dataIndex: "image",
+      key: "image",
+      render: (_, record) => {
+        const imgx = new Image()
+        imgx.src = `data:image/jpeg;base64,${record.image}`
+         
+        return(
+          
+           <img
+            width="75"
+            height="75"
+            alt={imgx.src}
+            src={imgx.src}
+          />
+        );
+      },
     },
     {
       title: "Action",

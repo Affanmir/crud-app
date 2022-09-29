@@ -10,13 +10,14 @@ export class ProductsService {
     @InjectModel('Product') private readonly productModel: Model<Product>,
   ) {}
 
-  async insertProduct(title: string, desc: string, price: number, category: string, img: string) {
+  async insertProduct(title: string, desc: string, price: number, category: string, img: string, image:string) {
     const newProduct = new this.productModel({
       title,
       description: desc,
       price,
       category,
       img,
+      image,
       
     });
     const result = await newProduct.save();
@@ -32,6 +33,7 @@ export class ProductsService {
       price: prod.price,
       category: prod.category,
       img: prod.img,
+      image: prod.image
     }));
   }
 
@@ -44,6 +46,7 @@ export class ProductsService {
       price: product.price,
       category: product.category,
       img: product.img,
+      image: product.image
     };
   }
 
@@ -54,6 +57,7 @@ export class ProductsService {
     price: number,
     category: string,
     img: string,
+    image:string,
   ) {
     const updatedProduct = await this.findProduct(productId);
     if (title) {
@@ -70,6 +74,9 @@ export class ProductsService {
     }
     if (img){
       updatedProduct.img = img;
+    }
+    if (image){
+      updatedProduct.image = image;
     }
     updatedProduct.save();
   }

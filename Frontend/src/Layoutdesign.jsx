@@ -14,6 +14,13 @@ import Prodgrid from "./Prodgrid";
 import Catgrid from "./Catgrid";
 import Categoryform from "./categoryform";
 const { Header, Content, Footer, Sider } = Layout;
+const axios = require("axios");
+
+const getBase64 = (img, callback) => {
+  const reader = new FileReader();
+  reader.addEventListener("load", () => callback(reader.result));
+  reader.readAsDataURL(img);
+};
 
 const Addprod = (requestOptions) => {
   fetch("/products", requestOptions);
@@ -34,7 +41,6 @@ const items = [
 
 const Layoutdesign = () => {
   const reloader = () => {
-    console.log(reloadRequired);
     if (reloadRequired) setreloadRequired(false);
     else setreloadRequired(true);
   };
@@ -54,39 +60,73 @@ const Layoutdesign = () => {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const Addcat = (requestOptions) => {
-    fetch("/category", requestOptions);
-  };
-  
+
   const onSubmiTCAT = (values) => {
+    console.log(values.image[0].originFileObj);
+    let formData = new FormData();
+    formData.append("image", values.image[0].originFileObj);
+    formData.append("title", values.CaTtitle);
+    formData.append("img", values.ImgURL);
+
     handleOk();
-    console.log(values);
-    const jsonmsg = {
+    axios({
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: values.CaTtitle,
-        img: values.ImgURL,
-      }),
-    };
-    Addcat(jsonmsg);
-    reloader();
+      url: "http://localhost:3000/category",
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        reloader();
+        console.log(`statusCode: ${res.statusCode}`);
+        console.log(res);
+      })
+      .catch((error) => {
+        reloader();
+        console.error(error);
+      });
+  
+   
   };
   const onSubmit = (values) => {
     handleOk();
-    const jsonmsg = {
+    let formData = new FormData();
+    formData.append("image", values.image[0].originFileObj);
+    formData.append("title", values.Prodtitle);
+    formData.append("img", values.ImgURL);
+    formData.append("description",values.Description);
+    formData.append("price", values.Price);
+    formData.append("category",values.Category);
+    axios({
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: values.Prodtitle,
-        description: values.Description,
-        price: values.Price,
-        category: values.Category,
-        img: values.ImgURL,
-      }),
-    };
-    Addprod(jsonmsg);
-    reloader();
+      url: "http://localhost:3000/products",
+      data: formData,
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+      .then((res) => {
+        reloader();
+        console.log(`statusCode: ${res.statusCode}`);
+        console.log(res);
+      })
+      .catch((error) => {
+        reloader();
+        console.error(error);
+      });
+    // const jsonmsg = {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({
+    //     title: values.Prodtitle,
+    //     description: values.Description,
+    //     price: values.Price,
+    //     category: values.Category,
+    //     img: values.ImgURL,
+    //   }),
+    // };
+    // Addprod(jsonmsg);
   };
 
   return (
@@ -148,8 +188,8 @@ const Layoutdesign = () => {
                   open={isModalOpen}
                   onOk={handleOk}
                   onCancel={handleCancel}
-                  footer= {null}
-                  destroyOnClose= {true}
+                  footer={null}
+                  destroyOnClose={true}
                 >
                   <Productform props={onSubmit} />
                 </Modal>
@@ -173,12 +213,12 @@ const Layoutdesign = () => {
                   open={isModalOpen}
                   onOk={handleOk}
                   onCancel={handleCancel}
-                  footer= {null}
-                  destroyOnClose= {true}
+                  footer={null}
+                  destroyOnClose={true}
                 >
                   <Categoryform props={onSubmiTCAT} />
                 </Modal>
-                <Catgrid props= {reloadRequired}/>
+                <Catgrid props={reloadRequired} />
               </>
             )}
           </div>

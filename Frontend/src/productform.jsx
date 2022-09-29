@@ -3,9 +3,17 @@ import { useState } from "react";
 import { PlusOutlined } from "@ant-design/icons";
 import { Form, Input, Button, Select, InputNumber, Upload } from "antd";
 
-
-const Productform = ({props}) => {
+const Productform = ({ props }) => {
   const [catdata, setCat] = useState([]);
+  const getFile = (e) => {
+    console.log("Upload event:", e);
+
+    if (Array.isArray(e)) {
+      return e.file;
+    }
+    return e && e.fileList;
+  };
+
   const getcat = () => {
     fetch("/category", {
       headers: {
@@ -30,23 +38,8 @@ const Productform = ({props}) => {
         labelCol={{ span: 10 }}
         wrapperCol={{ span: 20 }}
         layout="horizontal"
-        //onFinish={onSubmit}
         style={{ backgroundColor: "white", marginTop: 15 }}
-        onFinish= {props}
-        // onFinish={(values) => {
-        //   const jsonmsg = {
-        //     method: "POST",
-        //     headers: { "Content-Type": "application/json" },
-        //     body: JSON.stringify({
-        //       title: values.Prodtitle,
-        //       description: values.Description,
-        //       price: values.Price,
-        //       category: values.Category,
-        //       img: values.ImgURL,
-        //     }),
-        //   };
-        //   Addprod(jsonmsg);
-        // }}
+        onFinish={props}
       >
         <Form.Item style={{ color: "white" }} label="Title" name="Prodtitle">
           <Input />
@@ -71,14 +64,19 @@ const Productform = ({props}) => {
         <Form.Item style={{ color: "white" }} label="Imageurl" name="ImgURL">
           <Input />
         </Form.Item>
-        {/* <Form.Item label="Upload" valuePropName="fileList" name="image">
-          <Upload action="/upload.do" listType="picture-card">
+        <Form.Item
+          getValueFromEvent={getFile}
+          label="Upload"
+          valuePropName="fileList"
+          name="image"
+        >
+          <Upload ultiple={false} beforeUpload={(file)=>{return false}} listType="picture-card">
             <div>
               <PlusOutlined />
               <div style={{ marginTop: 8 }}>Image Upload</div>
             </div>
           </Upload>
-        </Form.Item> */}
+        </Form.Item>
         <Form.Item style={{ marginTop: 8 }}>
           <Button
             style={{ marginLeft: "400px" }}

@@ -11,6 +11,7 @@ import {
   Res,
   UseInterceptors,
   UploadedFile,
+  Header,
 } from '@nestjs/common';
 var fs = require('fs');
 
@@ -28,20 +29,23 @@ import { CategoryService } from './category.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 
+
 @Controller('category')
+
 export class CategoryController {
   constructor(private readonly CategoryService: CategoryService) {}
 
   @Post()
+  @Header("Access-Control-Allow-Origin", "*")
+  @Header("Content-Type", "multipart/form-data")
   @UseInterceptors(FileInterceptor('image'))
   async addCategory(
     @Body('title') catTitle: string,
     @Body('img') catImg: string,
-    @UploadedFile() catImage: Express.Multer.File
+    @UploadedFile() catImage: any
   ) {
-   
-    var temp = catImage.buffer.toString('base64');
-    //console.log(temp);
+
+  var temp = catImage.buffer.toString('base64');
     const generatedId = await this.CategoryService.insertCategory(
       catTitle,
       catImg,
@@ -61,13 +65,19 @@ export class CategoryController {
     return this.CategoryService.getSingleCategory(catId);
   }
 
+
   @Patch(':id')
+  @Header("Access-Control-Allow-Origin", "*")
+  @Header("Content-Type", "multipart/form-data")
+  @UseInterceptors(FileInterceptor('image'))
   async updateCategory(
     @Param('id') catId: string,
     @Body('title') catTitle: string,
-    @Body('img') catImg: string
+    @Body('img') catImg: string,
+    @UploadedFile() catImage:any
   ) {
-    await this.CategoryService.updateCategory(catId, catTitle, catImg );
+    var temp = catImage.buffer.toString('base64');
+    await this.CategoryService.updateCategory(catId, catTitle, catImg ,temp);
     return null;
   }
 

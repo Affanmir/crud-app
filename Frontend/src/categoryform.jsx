@@ -4,6 +4,14 @@ import { Upload } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
 const Categoryform = ({ props }) => {
+  const getFile = (e) => {
+  console.log('Upload event:', e);
+
+  if (Array.isArray(e)) {
+    return e.file;
+  }
+ return e && e.fileList;
+};
   return (
     <>
       <Form
@@ -19,8 +27,8 @@ const Categoryform = ({ props }) => {
         <Form.Item style={{ color: "white" }} label="Imageurl" name="ImgURL">
           <Input />
         </Form.Item>
-        <Form.Item label="Upload" valuePropName="fileList" name="image">
-          <Upload action="/upload.do" listType="picture-card">
+        <Form.Item getValueFromEvent={getFile} label="Upload" valuePropName="fileList" name="image">
+          <Upload multiple={false} beforeUpload={(file)=>{return false}} listType="picture-card">
             <div>
               <PlusOutlined />
               <div style={{ marginTop: 8 }}>Image Upload</div>

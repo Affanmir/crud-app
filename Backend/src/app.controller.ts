@@ -1,5 +1,5 @@
-import { Controller, Get, Header, Post, Res, UploadedFiles, UseInterceptors } from '@nestjs/common';
-import { FilesInterceptor } from '@nestjs/platform-express';
+import { Body, Controller, Get, Header, Post, Res, UploadedFile, UploadedFiles, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { AppService } from './app.service';
 
 @Controller()
@@ -11,4 +11,14 @@ export class AppController {
   getHello(): {name: string} {
     return {name: 'Max'};
   }
+
+  
+  @Post()
+  @UseInterceptors(FileInterceptor('image'))
+  async uploadedfile(
+    @UploadedFile() catImage: Express.Multer.File
+  ) {
+    console.log( 'cool');
+  }
+
 }

@@ -15,5 +15,6 @@ import { diskStorage, memoryStorage } from 'multer';
   ],
   controllers: [CategoryController],
   providers: [CategoryService],
+
 })
 export class CategoryModule {}

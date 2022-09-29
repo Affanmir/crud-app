@@ -44,6 +44,7 @@ export class CategoryService {
     categoryId: string,
     title: string,
     img: string,
+    image: string
   ) {
     const updatedCategory = await this.findCategory(categoryId);
     if (title) {
@@ -51,6 +52,9 @@ export class CategoryService {
     }
     if (img) {
       updatedCategory.img = img;
+    }
+    if (image) {
+      updatedCategory.image = image;
     }
     updatedCategory.save();
   }
